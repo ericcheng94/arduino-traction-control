@@ -1,4 +1,8 @@
+![Arduino Car](/Images/tc-car-1.jpg)
+
 The purpose of this arduino project is to explore through trial and error how to implement a rudimentary traction control system on an arduino car. I used 4x LM393 IR optocouplers on each of the four wheels to measure wheel speed, and a L298N DC motor controller to take in PWM signals from my arduino...
+
+![Control Loop](/Images/tc-control-loop.png)
 
 I initially tried to use a 9V battery to provide power to my motors, only to realize its voltage would drop to less than 5V under load and barely spin the motors at all. I then sought out a 11.1V 3S LiPo to do the heavy lifting. Despite the 2V drop across the L298N outputs I was still able to deliver up to 10.6V to each motor (LiPo is 12.6V under full charge, 4.2V per cell). This provided ample voltage and current and was able to spin the wheels up to ~450rpm...
 
