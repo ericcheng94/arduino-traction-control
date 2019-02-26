@@ -24,6 +24,7 @@
 
 unsigned long start_time  = 0;
 unsigned long end_time    = 0;
+
 int fLeftSteps  = 0;
 int fRightSteps = 0;
 int rLeftSteps  = 0;
@@ -33,31 +34,38 @@ int fRightSteps_old = 0;
 int rLeftSteps_old  = 0;
 int rRightSteps_old = 0;
 
-int rRight = 0;
-int rLeft  = 0;
-int fRight = 0;
 int fLeft  = 0;
+int fRight = 0;
+int rLeft  = 0;
+int rRight = 0;
 
-int tempL = 0;
-int rpmL = 0;
-int tempR = 0;
-int rpmR = 0;
+int tempFL = 0;
+int tempFR = 0;
+int tempRL = 0;
+int tempRR = 0;
+
+int rpmFL = 0;
+int rpmFR = 0;
+int rpmRL = 0;
+int rpmRR = 0;
+
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 void setup() {
   Serial.begin(9600);
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
+
   pinMode(enA, OUTPUT);
   pinMode(enB, OUTPUT);
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
-  pinMode(fLeftWheel,INPUT_PULLUP);
-  pinMode(fRightWheel,INPUT_PULLUP);
-  pinMode(rLeftWheel,INPUT_PULLUP);
-  pinMode(rRightWheel,INPUT_PULLUP);
+  pinMode(fLeftWheel, INPUT_PULLUP);
+  pinMode(fRightWheel, INPUT_PULLUP);
+  pinMode(rLeftWheel, INPUT_PULLUP);
+  pinMode(rRightWheel, INPUT_PULLUP);
 
   lcd.setCursor(10, 0);
   lcd.print("TC:OFF");
@@ -65,65 +73,67 @@ void setup() {
   lcd.print("V:11.1");
 }
 
-void updateLCD() {
+void tractionControl() {
   lcd.setCursor(0, 0);
-  lcd.print("whel1:");
+  lcd.print("lwRPM:");
   lcd.setCursor(0, 1);
-  lcd.print("whel2:");
+  lcd.print("rwRPM:");
 
   start_time = millis();
   end_time = start_time + 1000;
 
-  int wheel1 = rLeftWheel;
-  int wheel2 = rRightWheel;
-
   while(millis() < end_time)
   {
-    if(digitalRead(wheel1) == HIGH)
+    if(digitalRead(fLeftWheel) == HIGH)
+      fLeft = 1;
+    else if (fLeft == 1 && digitalRead(fLeftWheel == LOW)) {
+      fLeftSteps++;
+      fLeft = 0;
+    }
+    if(digitalRead(fRightWheel) == HIGH)
+      fRight = 1;
+    else if (fRight == 1 && digitalRead(fRightWheel == LOW)) {
+      fRightSteps++;
+      fRight = 0;
+    }
+    if(digitalRead(rLeftWheel) == HIGH)
       rLeft = 1;
-    else if (rLeft == 1 && digitalRead(wheel1 == LOW)) {
+    else if (rLeft == 1 && digitalRead(rLeftWheel == LOW)) {
       rLeftSteps++;
       rLeft = 0;
     }
-    if(digitalRead(wheel2) == HIGH)
+    if(digitalRead(rRightWheel) == HIGH)
       rRight = 1;
-    else if (rRight == 1 && digitalRead(wheel2 == LOW)) {
+    else if (rRight == 1 && digitalRead(rRightWheel == LOW)) {
       rRightSteps++;
       rRight = 0;
     }
-    // lcd.setCursor(6,0);
-    // lcd.print(rRightSteps);
-    // lcd.setCursor(6,1);
-    // lcd.print(fRightSteps);
-
-    // Serial.println("Steps " + rRightSteps);
-    // lcd.print("   ");
   }
-  tempL = rLeftSteps - rLeftSteps_old;
+
+  tempRL = rLeftSteps - rLeftSteps_old;
   rLeftSteps_old = rLeftSteps;
-  rpmL = ((tempL * 60 / 20));
+  rpmRL = ((tempRL * 60 / 20));
   lcd.setCursor(6, 0);
-  lcd.print(rpmL);
+  lcd.print(rpmRL);
   lcd.print(" ");
 
-  tempR = rRightSteps - rRightSteps_old;
+  tempRR = rRightSteps - rRightSteps_old;
   rRightSteps_old = rRightSteps;
-  rpmR = ((tempR * 60 / 20));
+  rpmRR = ((tempRR * 60 / 20));
   lcd.setCursor(6, 1);
-  lcd.print(rpmR);
+  lcd.print(rpmRR);
   lcd.print(" ");
 
-  int analogSpeed = 0;
+  int motorSpeed = 0; // 0 - 255
 
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  analogWrite(enA, analogSpeed);
-  analogWrite(enB, analogSpeed);
+  analogWrite(enA, motorSpeed);
+  analogWrite(enB, motorSpeed);
 }
 
 void loop() {
-  updateLCD();
-  // delay(10);
+  tractionControl();
 }
