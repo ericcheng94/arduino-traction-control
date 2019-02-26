@@ -26,6 +26,8 @@
 #define trigPin 43
 #define echoPin 42
 
+#define tcLed 38
+
 long  duration;
 int   distanceCm;
 
@@ -59,6 +61,10 @@ int rpmRR = 0;
 // Master motor speed control 0 - 255
 int motorMaster = 200;
 int motorSpeed = motorMaster;
+
+int tcRR = 0;
+int tcFR = 0;
+int tcGO = 1; // Run motors if 1, halt motors if 0
 
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
@@ -95,7 +101,7 @@ void setup() {
 
 void tractionControl() {
   start_time = millis();
-  end_time = start_time + 1000;
+  end_time = start_time + 100;
 
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -118,6 +124,7 @@ void tractionControl() {
     else if (fLeft == 1 && digitalRead(fLeftWheel == LOW)) {
       fLeftSteps++;
       fLeft = 0;
+      tcGO = 1;
     }
     // Front right wheel step counter
     if(digitalRead(fRightWheel) == HIGH)
@@ -125,6 +132,8 @@ void tractionControl() {
     else if (fRight == 1 && digitalRead(fRightWheel == LOW)) {
       fRightSteps++;
       fRight = 0;
+      tcFR++;
+      tcGO = 1;
     }
     // Rear left wheel step counter
     if(digitalRead(rLeftWheel) == HIGH)
@@ -139,52 +148,71 @@ void tractionControl() {
     else if (rRight == 1 && digitalRead(rRightWheel == LOW)) {
       rRightSteps++;
       rRight = 0;
+      tcRR++;
     }
 
+    if (tcRR > tcFR + 5)
+    {
+      analogWrite(enA, 0);
+      analogWrite(enB, 0);
+      digitalWrite(tcLed, HIGH);
+      tcFR = 0;
+      tcRR = 0;
+      tcGO = 0;
+      motorSpeed = 150;
+    }
     lcd.setCursor(3, 0);
     lcd.print(rRightSteps);
     lcd.setCursor(13, 0);
-    lcd.print(rLeftSteps);
+    lcd.print(tcRR);
+    // lcd.print(rLeftSteps);
     lcd.setCursor(3 , 1);
     lcd.print(fRightSteps);
     lcd.setCursor(13, 1);
-    lcd.print(fLeftSteps);
+    lcd.print(tcFR);
+    // lcd.print(fLeftSteps);
   }
-  // Front left wheel rpm calculation
-  tempFL = fLeftSteps - fLeftSteps_old;
-  fLeftSteps_old = fLeftSteps;
-  rpmFL = ((tempFL * 60 / 20));
-  lcd.setCursor(13, 1);
-  lcd.print(rpmFL);
-  lcd.print(" ");
-  // Front right wheel rpm calculation
-  tempFR = fRightSteps - fRightSteps_old;
-  fRightSteps_old = fRightSteps;
-  rpmFR = ((tempFR * 60 / 20));
-  lcd.setCursor(3, 1);
-  lcd.print(rpmFR);
-  lcd.print(" ");
-  // Rear left wheel rpm calculation
-  tempRL = rLeftSteps - rLeftSteps_old;
-  rLeftSteps_old = rLeftSteps;
-  rpmRL = ((tempRL * 60 / 20));
-  lcd.setCursor(13, 0);
-  lcd.print(rpmRL);
-  lcd.print(" ");
-  // Rear right wheel rpm calculation
-  tempRR = rRightSteps - rRightSteps_old;
-  rRightSteps_old = rRightSteps;
-  rpmRR = ((tempRR * 60 / 20));
-  lcd.setCursor(3, 0);
-  lcd.print(rpmRR);
-  lcd.print(" ");
+  // // Front left wheel rpm calculation
+  // tempFL = fLeftSteps - fLeftSteps_old;
+  // fLeftSteps_old = fLeftSteps;
+  // rpmFL = ((tempFL * 240 / 20));
+  // lcd.setCursor(13, 1);
+  // lcd.print(rpmFL);
+  // lcd.print(" ");
+  // // Front right wheel rpm calculation
+  // tempFR = fRightSteps - fRightSteps_old;
+  // fRightSteps_old = fRightSteps;
+  // rpmFR = ((tempFR * 240 / 20));
+  // lcd.setCursor(3, 1);
+  // lcd.print(rpmFR);
+  // lcd.print(" ");
+  // // Rear left wheel rpm calculation
+  // tempRL = rLeftSteps - rLeftSteps_old;
+  // rLeftSteps_old = rLeftSteps;
+  // rpmRL = ((tempRL * 240 / 20));
+  // lcd.setCursor(13, 0);
+  // lcd.print(rpmRL);
+  // lcd.print(" ");
+  // // Rear right wheel rpm calculation
+  // tempRR = rRightSteps - rRightSteps_old;
+  // rRightSteps_old = rRightSteps;
+  // rpmRR = ((tempRR * 240 / 20));
+  // lcd.setCursor(3, 0);
+  // lcd.print(rpmRR);
+  // lcd.print(" ");
 
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  analogWrite(enA, motorSpeed);
-  analogWrite(enB, motorSpeed);
+  if (tcGO == 1) {
+    analogWrite(enA, motorSpeed);
+    analogWrite(enB, motorSpeed);
+    digitalWrite(tcLed, LOW);
+  }
+  tcRR = 0;
+  tcFR = 0;
+  Serial.println(motorSpeed);
 }
 
 void loop() {
