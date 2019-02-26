@@ -33,8 +33,15 @@ int fRightSteps_old = 0;
 int rLeftSteps_old  = 0;
 int rRightSteps_old = 0;
 
-int temp = 0;
-int rpm = 0;
+int rRight = 0;
+int rLeft  = 0;
+int fRight = 0;
+int fLeft  = 0;
+
+int tempL = 0;
+int rpmL = 0;
+int tempR = 0;
+int rpmR = 0;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 void setup() {
@@ -60,48 +67,60 @@ void setup() {
 
 void updateLCD() {
   lcd.setCursor(0, 0);
-  lcd.print("fStep:");
+  lcd.print("whel1:");
   lcd.setCursor(0, 1);
-  lcd.print("rStep:");
+  lcd.print("whel2:");
 
   start_time = millis();
   end_time = start_time + 1000;
 
-  int rLeft = 0;
-  int fLeft = 0;
+  int wheel1 = rLeftWheel;
+  int wheel2 = rRightWheel;
 
   while(millis() < end_time)
   {
-    if(digitalRead(rLeftWheel) == HIGH)
-    {
+    if(digitalRead(wheel1) == HIGH)
+      rLeft = 1;
+    else if (rLeft == 1 && digitalRead(wheel1 == LOW)) {
       rLeftSteps++;
-      while(digitalRead(rLeftWheel) == HIGH);
+      rLeft = 0;
     }
-    if(digitalRead(fLeftWheel) == HIGH)
-    {
-      fLeftSteps++;
-      while(digitalRead(fLeftWheel) == HIGH);
+    if(digitalRead(wheel2) == HIGH)
+      rRight = 1;
+    else if (rRight == 1 && digitalRead(wheel2 == LOW)) {
+      rRightSteps++;
+      rRight = 0;
     }
-    lcd.setCursor(6,0);
-    lcd.print(rLeftSteps);
-    lcd.setCursor(6,1);
-    lcd.print(fLeftSteps);
-    // Serial.println("Steps " + rLeftSteps);
+    // lcd.setCursor(6,0);
+    // lcd.print(rRightSteps);
+    // lcd.setCursor(6,1);
+    // lcd.print(fRightSteps);
+
+    // Serial.println("Steps " + rRightSteps);
     // lcd.print("   ");
   }
-  // temp = rLeftSteps - rLeftSteps_old;
-  // rLeftSteps_old = rLeftSteps;
-  // rpm = ((temp * 60 / 20));
-  // lcd.setCursor(6, 1);
-  // lcd.print(rpm);
-  // lcd.print(" ");
+  tempL = rLeftSteps - rLeftSteps_old;
+  rLeftSteps_old = rLeftSteps;
+  rpmL = ((tempL * 60 / 20));
+  lcd.setCursor(6, 0);
+  lcd.print(rpmL);
+  lcd.print(" ");
+
+  tempR = rRightSteps - rRightSteps_old;
+  rRightSteps_old = rRightSteps;
+  rpmR = ((tempR * 60 / 20));
+  lcd.setCursor(6, 1);
+  lcd.print(rpmR);
+  lcd.print(" ");
+
+  int analogSpeed = 0;
 
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  analogWrite(enA, 200);
-  analogWrite(enB, 200);
+  analogWrite(enA, analogSpeed);
+  analogWrite(enB, analogSpeed);
 }
 
 void loop() {
