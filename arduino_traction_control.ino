@@ -7,7 +7,6 @@
 #define d5 29
 #define d6 26
 #define d7 27
-
 // L298N DC motor controller pins
 #define enA 2
 #define in1 22
@@ -15,17 +14,15 @@
 #define in3 24
 #define in4 25
 #define enB 3
-
 // Wheel speed sensor pins
 #define fLeftWheel  50
 #define fRightWheel 51
 #define rLeftWheel  52
 #define rRightWheel 53
-
 // Ultrasonic sensor pins
 #define trigPin 43
 #define echoPin 42
-
+// Traction Control Indicator Light
 #define tcLed 38
 
 long  duration;
@@ -34,10 +31,12 @@ int   distanceCm;
 unsigned long start_time  = 0;
 unsigned long end_time    = 0;
 
-int fLeftSteps  = 0;
-int fRightSteps = 0;
-int rLeftSteps  = 0;
-int rRightSteps = 0;
+// Set as volatile for use in ISR
+volatile int fLeftSteps  = 0;
+volatile int fRightSteps = 0;
+volatile int rLeftSteps  = 0;
+volatile int rRightSteps = 0;
+
 int fLeftSteps_old  = 0;
 int fRightSteps_old = 0;
 int rLeftSteps_old  = 0;
@@ -97,6 +96,27 @@ void setup() {
   lcd.print("FR:");
   lcd.setCursor(10, 1);
   lcd.print("FL:");
+}
+
+// Pin Change Interrupt Request 0
+ISR (PCINT0_vect) {
+
+	// handle pin change interrupt for selected pins
+}
+
+// Pin Change Interrupt Request 1
+ISR (PCINT1_vect) {
+	// handle pin change interrupt for selected pins
+}
+
+// Pin Change Interrupt Request 2
+ISR (PCINT2_vect) {
+	// handle pin change interrupt for selected pins
+}
+
+// Interrupt Service Routine (ISR)
+void pinChange() {
+	flag = true;
 }
 
 void tractionControl() {
@@ -172,34 +192,34 @@ void tractionControl() {
     lcd.print(tcFR);
     // lcd.print(fLeftSteps);
   }
-  // // Front left wheel rpm calculation
-  // tempFL = fLeftSteps - fLeftSteps_old;
-  // fLeftSteps_old = fLeftSteps;
-  // rpmFL = ((tempFL * 240 / 20));
-  // lcd.setCursor(13, 1);
-  // lcd.print(rpmFL);
-  // lcd.print(" ");
-  // // Front right wheel rpm calculation
-  // tempFR = fRightSteps - fRightSteps_old;
-  // fRightSteps_old = fRightSteps;
-  // rpmFR = ((tempFR * 240 / 20));
-  // lcd.setCursor(3, 1);
-  // lcd.print(rpmFR);
-  // lcd.print(" ");
-  // // Rear left wheel rpm calculation
-  // tempRL = rLeftSteps - rLeftSteps_old;
-  // rLeftSteps_old = rLeftSteps;
-  // rpmRL = ((tempRL * 240 / 20));
-  // lcd.setCursor(13, 0);
-  // lcd.print(rpmRL);
-  // lcd.print(" ");
-  // // Rear right wheel rpm calculation
-  // tempRR = rRightSteps - rRightSteps_old;
-  // rRightSteps_old = rRightSteps;
-  // rpmRR = ((tempRR * 240 / 20));
-  // lcd.setCursor(3, 0);
-  // lcd.print(rpmRR);
-  // lcd.print(" ");
+  // Front left wheel rpm calculation
+  tempFL = fLeftSteps - fLeftSteps_old;
+  fLeftSteps_old = fLeftSteps;
+  rpmFL = ((tempFL * 240 / 20));
+  lcd.setCursor(13, 1);
+  lcd.print(rpmFL);
+  lcd.print(" ");
+  // Front right wheel rpm calculation
+  tempFR = fRightSteps - fRightSteps_old;
+  fRightSteps_old = fRightSteps;
+  rpmFR = ((tempFR * 240 / 20));
+  lcd.setCursor(3, 1);
+  lcd.print(rpmFR);
+  lcd.print(" ");
+  // Rear left wheel rpm calculation
+  tempRL = rLeftSteps - rLeftSteps_old;
+  rLeftSteps_old = rLeftSteps;
+  rpmRL = ((tempRL * 240 / 20));
+  lcd.setCursor(13, 0);
+  lcd.print(rpmRL);
+  lcd.print(" ");
+  // Rear right wheel rpm calculation
+  tempRR = rRightSteps - rRightSteps_old;
+  rRightSteps_old = rRightSteps;
+  rpmRR = ((tempRR * 240 / 20));
+  lcd.setCursor(3, 0);
+  lcd.print(rpmRR);
+  lcd.print(" ");
 
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);

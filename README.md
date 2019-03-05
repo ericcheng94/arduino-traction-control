@@ -30,3 +30,6 @@ iFlight 20x M3 Titanium Bolts: http://amzn.com/B073TRKRRX
 iFlight 10x 25mm Aluminum Standoffs: http://amzn.com/B06XCQDZ9V  
 eBoot 100x Adhesive Cable Clips: http://amzn.com/B01HR9VS4I  
 TapeCase UHMW Tape: http://amzn.com/B00823JF0S
+Pre-Formed 140pc Jumper Wire Kit: http://amzn.com/B014JOV4TI
+
+Total cost of all parts: $178.94 USD
