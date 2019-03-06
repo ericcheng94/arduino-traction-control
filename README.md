@@ -11,6 +11,13 @@ I still had an issue with the rear wheels gripping despite the cheap plasticky r
 Halfway through the build I realized due to my lack of experience with arduinos that my UNO R3 board with its 14 digital I/O wouldn't be enough for a project of my scale. Therefore I replaced it with the MEGA 2560 which also represented a challenge in terms of its larger footprint. I used 25mm standoffs to lift the Mega above the breadboard, conveniently creating a perfect slot in which to insert the LiPo battery...
 
 With the input and output signals I was able to slowly work out an algorithm to detect when the rear wheels rotated at a greater angular velocity than that of the front wheels...
+
+Finally the function analogWrite() will output a PWM signal to the L298N motor controller. Using a 12.6V LiPo power source:
+(analogWrite(pin, 0)   = 0% duty cycle   ~ 0.0V)
+(analogWrite(pin, 63)  = 25% duty cycle. ~ 3.2V)
+(analogWrite(pin, 127) = 50% duty cycle  ~ 6.3V)
+(analogWrite(pin, 191) = 75% duty cycle  ~ 9.5V)
+(analogWrite(pin, 255) = 100% duty cycle ~ 12.6V)
 <br><br>
 
 List of parts used for this build:  
