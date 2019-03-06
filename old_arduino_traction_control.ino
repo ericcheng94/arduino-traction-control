@@ -37,10 +37,6 @@ volatile int fRightSteps = 0;
 volatile int rLeftSteps  = 0;
 volatile int rRightSteps = 0;
 
-volatile int tcRR = 0;
-volatile int tcFR = 0;
-volatile int tcGO = 1; // Run motors if 1, halt motors if 0
-
 int fLeftSteps_old  = 0;
 int fRightSteps_old = 0;
 int rLeftSteps_old  = 0;
@@ -64,6 +60,10 @@ int rpmRR = 0;
 // Master motor speed control 0 - 255
 int motorMaster = 150;
 int motorSpeed = motorMaster;
+
+int tcRR = 0;
+int tcFR = 0;
+int tcGO = 1; // Run motors if 1, halt motors if 0
 
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
@@ -98,22 +98,6 @@ void setup() {
   lcd.print("FL:");
 }
 
-// Pin Change Interrupt Request 0
-ISR (PCINT0_vect) {
-	// handle pin change interrupt for selected pins
-
-}
-
-// Pin Change Interrupt Request 1
-ISR (PCINT1_vect) {
-	// handle pin change interrupt for selected pins
-}
-
-// Pin Change Interrupt Request 2
-ISR (PCINT2_vect) {
-	// handle pin change interrupt for selected pins
-}
-
 void tractionControl() {
   start_time = millis();
   end_time = start_time + 100;
@@ -133,10 +117,38 @@ void tractionControl() {
 
   while(millis() < end_time)
   {
-	attachInterrupt(digitalPinToInterrupt(fLeftWheelInterrupt),	frontLeftWheelInterrupted, RISING);
-	attachInterrupt(digitalPinToInterrupt(fRightWheelInterrupt), frontRightWheelInterrupted, RISING);
-	attachInterrupt(digitalPinToInterrupt(rLeftWheelInterrupt),	rearLeftWheelInterrupted, RISING);
-	attachInterrupt(digitalPinToInterrupt(rRightWheelInterrupt), rearRightWheelInterrupted, RISING);
+    // Front left wheel step counter
+    if(digitalRead(fLeftWheelnterrupt) == HIGH)
+      fLeft = 1;
+    else if (fLeft == 1 && digitalRead(fLeftWheelnterrupt == LOW)) {
+      fLeftSteps++;
+      fLeft = 0;
+      tcGO = 1;
+    }
+    // Front right wheel step counter
+    if(digitalRead(fRightWheelnterrupt) == HIGH)
+      fRight = 1;
+    else if (fRight == 1 && digitalRead(fRightWheelnterrupt == LOW)) {
+      fRightSteps++;
+      fRight = 0;
+      tcFR++;
+      tcGO = 1;
+    }
+    // Rear left wheel step counter
+    if(digitalRead(rLeftWheelnterrupt) == HIGH)
+      rLeft = 1;
+    else if (rLeft == 1 && digitalRead(rLeftWheelnterrupt == LOW)) {
+      rLeftSteps++;
+      rLeft = 0;
+    }
+    // Rear right wheel step counter
+    if(digitalRead(rRightWheelnterrupt) == HIGH)
+      rRight = 1;
+    else if (rRight == 1 && digitalRead(rRightWheelnterrupt == LOW)) {
+      rRightSteps++;
+      rRight = 0;
+      tcRR++;
+    }
 
     if (tcRR > tcFR + 5)
     {
@@ -204,25 +216,4 @@ void tractionControl() {
 
 void loop() {
   tractionControl();
-}
-
-// External ISR triggered by a change in the front left wheel sensor pin state
-void frontLeftWheelInterrupted() {
-	fLeftStep++;
-	tcGO = 1;
-}
-// External ISR triggered by a change in the front right wheel sensor pin state
-void frontRightWheelInterrupted() {
-	fRightSteps++;
-	tcFR++;
-	tcGO = 1;
-}
-// External ISR triggered by a change in the rear left wheel sensor pin state
-void rearLeftWheelInterrupted() {
-	rLeftSteps++;
-}
-// External ISR triggered by a change in the rear right wheel sensor pin state
-void rearRightWheelInterrupted() {
-	rRightSteps++;
-	tcRR++;
 }
