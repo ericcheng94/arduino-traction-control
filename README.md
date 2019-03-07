@@ -5,8 +5,9 @@
 
 The purpose of this arduino project explore the implementation of a rudimentary traction control system on an rear wheel drive arduino car. The microcontroller is an Arduino Mega 2560, and all logic is programmed using C++. I am using 4x LM393 IR optocouplers on each of the four wheels to measure wheel speed, and sending PWM control to a L298N DC motor controller to power the twin-motor rear wheels. High current power is delivered via a 11.1V 3S LiPo battery.
 
-![Speed Sensor](/Images/tc-car-speed-sensor.jpg)
-![L289N](/Images/tc-car-l298n.jpg)
+LM393 IR Speed Sensor             |  L298N DC Motor Controller
+:-------------------------:|:-------------------------:
+![Speed Sensor](/Images/tc-car-speed-sensor.jpg)  |  ![L289N](/Images/tc-car-l298n.jpg)
 
 ![Control Loop](/Images/tc-control-loop.png)
 
