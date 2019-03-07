@@ -5,6 +5,9 @@
 
 The purpose of this arduino project explore the implementation of a rudimentary traction control system on an rear wheel drive arduino car. The microcontroller is an Arduino Mega 2560, and all logic is programmed using C++. I am using 4x LM393 IR optocouplers on each of the four wheels to measure wheel speed, and sending PWM control to a L298N DC motor controller to power the twin-motor rear wheels. High current power is delivered via a 11.1V 3S LiPo battery.
 
+![Speed Sensor](/Images/tc-car-speed-sensor.jpg)
+![L289N](/Images/tc-car-l298n.jpg)
+
 ![Control Loop](/Images/tc-control-loop.png)
 
 I initially tried to use a 9V battery to provide power to my motors, only to realize its voltage would drop to less than 5V under load and barely spin the motors at all. I then sought out a 11.1V 3S LiPo to do the heavy lifting. Despite the 2V drop across the L298N outputs I was still able to deliver up to 10.6V to each motor (LiPo is 12.6V under full charge, 4.2V per cell). This provided ample voltage and current and was able to spin the wheels up to ~450rpm under max PWM duty cycle.  
@@ -12,7 +15,8 @@ I initially tried to use a 9V battery to provide power to my motors, only to rea
 I still had an issue with the rear wheels gripping despite the cheap plastic rubber tires. Doing a little research I found out about UHMW (Ultra High Molecular Weight) tape which greatly reduces the coefficient of friction on the tires. With them wrapped around the rear tires they easily lose traction, which better demonstrates the performance of the traction control system.  
 
 Halfway through the build I realized due to my lack of experience with arduinos that my UNO R3 board with its 14 digital I/O wouldn't be enough for a project of my scale. Therefore I replaced it with the MEGA 2560 which also represented a challenge in terms of its larger footprint. I used 25mm standoffs to lift the Mega above the breadboard, conveniently creating a perfect slot in which to insert the LiPo battery.  
-  
+
+![Arduino Car Top](/Images/tc-car-2.jpg)
 
 The function analogWrite() will output a PWM signal to the L298N motor controller. Using a 12.6V LiPo power source:  
 (analogWrite(pin, 0)   = 0% duty cycle   ~ 0.0V)  
