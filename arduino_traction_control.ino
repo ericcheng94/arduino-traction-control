@@ -19,9 +19,13 @@
 // #define fRightWheelInterrupt 51
 // #define rLeftWheelInterrupt  52
 // #define rRightWheelInterrupt 53
+
+/* Crash Detect Arduino Nano
 // Ultrasonic sensor pins
 #define trigPin 43
 #define echoPin 42
+*/
+
 // Traction Control Indicator Light
 #define tcLed 38
 
@@ -30,9 +34,10 @@ const byte fRightWheelInterrupt = 21;
 const byte rLeftWheelInterrupt = 18;
 const byte rRightWheelInterrupt = 19;
 
+/* Crash Detect Arduino Nano
 long  duration;
 int   distanceCm;
-
+*/
 unsigned long start_time  = 0;
 unsigned long end_time    = 0;
 
@@ -111,7 +116,6 @@ void setup() {
 // // Pin Change Interrupt Request 0
 // ISR (PCINT0_vect) {
 //   // handle pin change interrupt for selected pins
-//
 // }
 //
 // // Pin Change Interrupt Request 1
@@ -128,6 +132,7 @@ void tractionControl() {
   start_time = millis();
   end_time = start_time + 100;
 
+/* Crash Detect Arduino Nano
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -140,6 +145,7 @@ void tractionControl() {
     motorSpeed = 0;
   else
     motorSpeed = motorMaster;
+*/
 
   while(millis() < end_time)
   {
