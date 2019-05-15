@@ -1,11 +1,11 @@
 #include <SPI.h>
 #include "mcp_can.h"
 
-// CS pin for SPI communication
+// Chip Select pin for SPI communication
 #define spi_CS_pin 10;
 
 #define led_pin 11;
-boolean ledON = 1;
+bool ledON = 1;
 
 MCP_CAN CAN(spi_CS_pin);
 

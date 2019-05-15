@@ -1,15 +1,15 @@
 #include <SPI.h>
-#include <mcp_can.h>
+#include "mcp_can.h"
 
 // Ultrasonic sensor pins
 #define trigPin 6
 #define echoPin 9
 
-// CS pin for SPI communication
+// Chip Select pin for SPI communication
 #define spi_CS_pin 10;
 
-int   ledHIGH   = 1;
-int   ledLOW    = 0;
+int   ledHIGH = 1;
+int   ledLOW = 0;
 bool  crashImminent = false;
 
 MCP_CAN CAN(spi_CS_pin);
@@ -31,6 +31,11 @@ void loop() {
   CAN.sendMsgBuf(0x43, 0, 8, stmp);
   // delay(1000);
 
+  crashMitigation();
+  delay(10); // 10ms delay ~ scan for collision 100 times a second
+}
+
+void crashMitigation() {
   // Sends out ultrasonic signal and checks rebounding signal for distance
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -43,8 +48,8 @@ void loop() {
   if (distanceCm < 50) {
     // Send interrupt signal to Arduino Mega of impending doom
     crashImminent = true;
-
+  } else {
+    // Gives the a-ok to Arduino Mega to keep driving
+    crashImminent = false;
   }
-
-
 }
